@@ -1,5 +1,4 @@
-var TestingClass = (function () {
-    function TestingClass() {
+class TestingClass {
+    constructor() {
     }
-    return TestingClass;
-}());
+}

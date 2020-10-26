@@ -1,9 +1,13 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "ESNext",
         "module": "commonjs",
         "outDir": "bin",
-        "removeComments": true
+        "removeComments": true,
+        "lib": [
+            "ES2015",
+            "DOM"
+        ]
     },
     "include": [
         "src/**/*"
