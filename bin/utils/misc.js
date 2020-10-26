@@ -10,7 +10,23 @@ class Utils {
             return '';
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
+    static EnsureLoaderExists() {
+        if (document.querySelectorAll('.loading').length == 0) {
+            document.body.appendChild(DOM.CreateElement('div', { class: "loading" }, 'Loading&#8230;'));
+        }
+    }
+    static BeginLoading() {
+        Utils.EnsureLoaderExists();
+        Utils._loadingCount++;
+        document.querySelector('.loading').classList.toggle('hidden', Utils._loadingCount == 0);
+    }
+    static EndLoading() {
+        Utils.EnsureLoaderExists();
+        Utils._loadingCount--;
+        document.querySelector('.loading').classList.toggle('hidden', Utils._loadingCount == 0);
+    }
 }
+Utils._loadingCount = 0;
 Date.prototype.toLocaleISOString = function () {
     var timezone_offset_min = this.getTimezoneOffset(), offset_hrs = parseInt(Math.abs(timezone_offset_min / 60)), offset_min = Math.abs(timezone_offset_min % 60), timezone_standard;
     if (offset_hrs < 10)

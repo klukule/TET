@@ -19,6 +19,26 @@ class Utils {
         if (!results[2]) return '';
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
+
+    private static _loadingCount = 0;
+
+    private static EnsureLoaderExists() {
+        if (document.querySelectorAll('.loading').length == 0) {
+            document.body.appendChild(DOM.CreateElement('div', { class: "loading" }, 'Loading&#8230;'));
+        }
+    }
+
+    public static BeginLoading() {
+        Utils.EnsureLoaderExists();
+        Utils._loadingCount++;
+        document.querySelector('.loading').classList.toggle('hidden', Utils._loadingCount == 0);
+    }
+
+    public static EndLoading() {
+        Utils.EnsureLoaderExists();
+        Utils._loadingCount--;
+        document.querySelector('.loading').classList.toggle('hidden', Utils._loadingCount == 0);
+    }
 }
 ////////////////////////
 // Date extensions

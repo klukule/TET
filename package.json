@@ -17,6 +17,7 @@
         "watch": "run-p serve watch:*"
     },
     "devDependencies": {
+        "@types/googlemaps": "^3.40.2",
         "browser-sync": "^2.26.13",
         "copyfiles": "^2.4.0",
         "node-sass": "^4.14.1",

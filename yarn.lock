@@ -12,6 +12,11 @@
   resolved "https://registry.yarnpkg.com/@blakeembrey/template/-/template-1.0.0.tgz#bf8828bc3ae8004d97904d78f64e3cc2cd216438"
   integrity sha512-J6WGZqCLdRMHUkyRG6fBSIFJ0rL60/nsQNh5rQvsYZ5u0PsKw6XQcJcA3DWvd9cN3j/IQx5yB1fexhCafwwUUw==
 
+"@types/googlemaps@^3.40.2":
+  version "3.40.2"
+  resolved "https://registry.yarnpkg.com/@types/googlemaps/-/googlemaps-3.40.2.tgz#282fc5383ffdb035e1698f846c941cad501f02cb"
+  integrity sha512-LYlp497JZ/AjsjmGQMHcKmqO/MkUSLeUtsY++CQwy3VN8rqeotMacxnCF3xoGd8LphNqDdgQX7PL6qG0Pmh0Hw==
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
