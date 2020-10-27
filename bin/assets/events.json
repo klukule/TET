@@ -6,12 +6,7 @@
     },
     {
         "id": 1,
-        "name": "Testing event... 1...2...3...",
-        "at": "2020-10-27T19:00+0100"
-    },
-    {
-        "id": 3,
-        "name": "Past event",
-        "at": "2020-10-20T19:00+0200"
+        "name": "PHIA October Patreon Meetup",
+        "at": "2020-10-28T19:00+-0400"
     }
 ]

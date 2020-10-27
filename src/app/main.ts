@@ -101,12 +101,12 @@ async function BuildMenu() {
     const pastEvents = Events.filter(e => e.At.getTime() < now.getTime());
 
     // Draw upcomming events
-    container.appendChild(DOM.CreateElement('h3', {}, 'Upcomming events'));
+    container.appendChild(DOM.CreateElement('h3', {}, 'Upcoming events'));
     for (const event of futureEvents) {
         container.appendChild(DOM.CreateElement('a', { onclick: SidenavEventSelected.Emit.bind(SidenavEventSelected, event.Id) }, event.Name));
     }
     if (futureEvents.length == 0) {
-        container.appendChild(DOM.CreateElement('a', { class: 'disabled' }, 'No upcomming events'));
+        container.appendChild(DOM.CreateElement('a', { class: 'disabled' }, 'No upcoming events'));
     }
 
     // Draw past events
