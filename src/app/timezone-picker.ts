@@ -136,7 +136,7 @@ class TimezonePicker {
     private _selectedPolygon;
     private _mapZones: { [key: string]: TimezonePickerPolygon } = {};
     private _transitions = {};
-
+    private _selectedZone = null;
     private _isLoaded = false;
 
     /**
@@ -255,11 +255,16 @@ class TimezonePicker {
     }
 
     public SelectZone(olsonName: string) {
+        this._selectedZone = olsonName;
         const centroid = this._zoneCentroids[olsonName];
         // Click the centroid
         if (centroid) {
             this.MapClickHandler({ latLng: { lat: () => centroid[1], lng: () => centroid[0] } });
         }
+    }
+
+    public GetSelectedZone() {
+        return this._selectedZone;
     }
 
     private async MapClickHandler(e: TimezonePickerCallbackEventArgs) {
@@ -416,10 +421,10 @@ class TimezonePicker {
 
             for (const name in data.transitions) {
                 const transitions = data.transitions[name];
-                if (!this._transitions[name])
-                    this._transitions[name] = transitions;
-                else
-                    this._transitions[name].push(...transitions);
+                // if (!this._transitions[name])
+                this._transitions[name] = transitions;
+                // else
+                // this._transitions[name].push(...transitions);
             }
 
 

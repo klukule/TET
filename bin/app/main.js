@@ -1,6 +1,7 @@
 const API_URL = 'assets/events.json';
 let Events = [];
 let EventId = -1;
+const SidenavEventSelected = new EventEmitter();
 async function Loaded() {
     const timezonePicker = new TimezonePicker(document.querySelector('#zonepicker'), {
         mapper: TZGoogleMapsProvider,
@@ -16,6 +17,10 @@ async function Loaded() {
     });
     timezonePicker.OnReady.Subscribe(() => {
         timezonePicker.SelectZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+    });
+    SidenavEventSelected.Subscribe((eventId) => {
+        EventId = eventId;
+        timezonePicker.SelectZone(timezonePicker.GetSelectedZone());
     });
     timezonePicker.OnSelect.Subscribe((olsonName, utcOffset, tzName) => {
         DisplayActiveEvent(timezonePicker, olsonName, utcOffset, tzName);
@@ -39,6 +44,25 @@ async function LoadEvents() {
     console.groupEnd();
 }
 async function BuildMenu() {
+    const container = document.querySelector('#eventContainer');
+    container.innerHTML = '';
+    const now = new Date();
+    const futureEvents = Events.filter(e => e.At.getTime() >= now.getTime());
+    const pastEvents = Events.filter(e => e.At.getTime() < now.getTime());
+    container.appendChild(DOM.CreateElement('h3', {}, 'Upcomming events'));
+    for (const event of futureEvents) {
+        container.appendChild(DOM.CreateElement('a', { onclick: SidenavEventSelected.Emit.bind(SidenavEventSelected, event.Id) }, event.Name));
+    }
+    if (futureEvents.length == 0) {
+        container.appendChild(DOM.CreateElement('a', { class: 'disabled' }, 'No upcomming events'));
+    }
+    container.appendChild(DOM.CreateElement('h3', {}, 'Past events'));
+    for (const event of pastEvents) {
+        container.appendChild(DOM.CreateElement('a', { onclick: SidenavEventSelected.Emit.bind(SidenavEventSelected, event.Id) }, event.Name));
+    }
+    if (pastEvents.length == 0) {
+        container.appendChild(DOM.CreateElement('a', { class: 'disabled' }, 'No past events'));
+    }
 }
 function DisplayActiveEvent(instance, olsonName, utcOffset, tzName) {
     if (EventId == -1) {

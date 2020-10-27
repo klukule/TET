@@ -11,6 +11,7 @@ class TimezonePicker {
         this._selectedRegionKey = null;
         this._mapZones = {};
         this._transitions = {};
+        this._selectedZone = null;
         this._isLoaded = false;
         this._polygonCache = {};
         this._currentHoverRegion = null;
@@ -93,10 +94,14 @@ class TimezonePicker {
         this._mapper.HideInfoWindow();
     }
     SelectZone(olsonName) {
+        this._selectedZone = olsonName;
         const centroid = this._zoneCentroids[olsonName];
         if (centroid) {
             this.MapClickHandler({ latLng: { lat: () => centroid[1], lng: () => centroid[0] } });
         }
+    }
+    GetSelectedZone() {
+        return this._selectedZone;
     }
     async MapClickHandler(e) {
         if (!this._isLoaded)
@@ -222,10 +227,7 @@ class TimezonePicker {
             this._mapZones[zoneName] = [];
             for (const name in data.transitions) {
                 const transitions = data.transitions[name];
-                if (!this._transitions[name])
-                    this._transitions[name] = transitions;
-                else
-                    this._transitions[name].push(...transitions);
+                this._transitions[name] = transitions;
             }
             var result = this.HitTestAndConvert(data.polygons, lat, lng);
             if (result.inZone) {

@@ -22,8 +22,11 @@
         color: #818181;
         display: block;
         transition: 0.3s;
-        &:hover {
-            color: #f1f1f1;
+        &:not(.disabled) {
+            cursor: pointer;
+            &:hover {
+                color: #f1f1f1;
+            }
         }
     }
     .container {

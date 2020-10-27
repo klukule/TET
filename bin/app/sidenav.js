@@ -1,5 +1,5 @@
 function OpenNav() {
-    document.getElementById("sidenav").style.width = "250px";
+    document.getElementById("sidenav").style.width = "320px";
     document.getElementById('sidenav-overlay').classList.toggle('hidden', false);
 }
 function CloseNav() {
