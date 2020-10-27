@@ -9,7 +9,55 @@
 </head>
 
 <body>
-    <div id="zonepicker" style="width: 100vw; height: 100vh;">
+    <!-- Sidenav begin -->
+    <div id="sidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="CloseNav()">&times;</a>
+        <div class="container">
+            <h3>Upcomming events</h3>
+            <a href="#">Test evt1</a>
+            <a href="#">Test evt2</a>
+            <h3>Past events</h3>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+            <a href="#">Test evt2</a>
+        </div>
+    </div>
+    <div class="sidenav-overlay hidden" id="sidenav-overlay" onclick="CloseNav()"></div>
+
+    <div class="sidenav-toggle">
+        <button class="openbtn" onclick="OpenNav()">Events</button>
+    </div>
+    <!-- Sidenav end -->
+
+    <!-- Zone picker -->
+    <div id="zonepicker" style="width: 100vw; height: 100vh;"></div>
+    <!-- Zone picker end -->
 </body>
 <!-- Vendor -->
 <script src="http://maps.google.com/maps/api/js?sensor=false&key=AIzaSyAJVPDUT2mPoi08m6s6qMbSyhCb11SXDmE"></script>
@@ -23,6 +71,7 @@
 <!-- App specific -->
 <script src="app/timezone-picker.js"></script>
 <script src="app/timezone-picker.gmaps.js"></script>
+<script src="app/sidenav.js"></script>
 
 <!-- Last is main file -->
 <script src="app/main.js"></script>
