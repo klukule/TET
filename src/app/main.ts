@@ -1,9 +1,23 @@
+// TODO: Cleanup
 
+// Events/event api url
+const API_URL = 'assets/events.json';
+let Events: EventEntry[] = [];
+let EventId: number = -1;
+type EventEntry = {
+    Id: number,
+    Name: string,
+    At: Date
+};
+
+/**
+ * Application entrypoint - called when DOM is loaded and application is ready to run
+ */
 async function Loaded() {
-    const element = document.querySelector('#zonepicker');
-    const timezonePicker = new TimezonePicker(element,
+    // Setup timezone picket
+    const timezonePicker = new TimezonePicker(document.querySelector('#zonepicker'),
         {
-            mapper: GoogleMapsWrapper,
+            mapper: TZGoogleMapsProvider,
             jsonRootUrl: 'assets/tz_json/',
             initialLat: 0,
             initialLng: 0,
@@ -14,25 +28,121 @@ async function Loaded() {
                 styles: gmapStyle
             }
         });
+
+    // Select browser local timezone
     timezonePicker.OnReady.Subscribe(() => {
         timezonePicker.SelectZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
     });
-    timezonePicker.OnHover.Subscribe((offsetMinutes, timezoneNames) => {
-        // console.log("Hover", offsetMinutes, timezoneNames);
-    });
 
+    // Display info window with event data
     timezonePicker.OnSelect.Subscribe((olsonName, utcOffset, tzName) => {
-        timezonePicker.ShowInfoWindow('On select test');
+        DisplayActiveEvent(timezonePicker, olsonName, utcOffset, tzName);
     });
 
+
+    await LoadEvents();
+    // Initialize timezone picker after we have events, so we can display it right away
     await timezonePicker.InitializeAsync();
+    await BuildMenu();
     Utils.EndLoading();
 }
 
+// Begin loading
 Utils.BeginLoading();
 google.maps.event.addDomListener(window, 'load', Loaded);
 
+/**
+ * Loads any events from API and sorts them out based on the date from newest to oldest
+ */
+async function LoadEvents() {
+    const rawEvents = await Network.GetAsync<any[]>(API_URL);
+
+    // Process dates and sort by date time of occurance
+    Events = rawEvents.map(evt => <EventEntry>{ Id: evt.id, At: new Date(evt.at), Name: evt.name })
+        .sort((a, b) => b.At.getTime() - a.At.getTime());
+
+    const queryId = Utils.GetQueryParameterByName("id");
+    // TODO: Check if queryId > 0 etc...
+    EventId = queryId != null ? parseInt(queryId) : (Events.length > 0 ? Events[0].Id : -1);
+    console.groupCollapsed("Events");
+    console.log("DB", Events);
+    console.log("Query", EventId);
+    console.groupEnd();
+}
+
+/**
+ * Populates sidebar menu with future and past events
+ */
+async function BuildMenu() {
+
+}
+
+/**
+ * Handles tz pickers OnSelected event and renders apropriate informations about the event
+ * @param instance Timezone picker instance
+ * @param olsonName Timezone OLSON name
+ * @param utcOffset Timezone offset from UTC in minutes
+ * @param tzName Timezone name
+ */
+function DisplayActiveEvent(instance: TimezonePicker, olsonName: string, utcOffset: number, tzName: string) {
+    if (EventId == -1) {
+        instance.ShowInfoWindow("No active event found.");
+        return;
+    }
+    const targetEvent = Events.find(e => e.Id == EventId);
+    // Calculate offseted times
+
+    // Local time
+    const now = new Date();
+
+    // Adjusted time to target timezone
+    const localNow = new Date(now.getTime() + (now.getTimezoneOffset() + utcOffset) * 60 * 1000);
+
+    // Adjust event time to local timezone
+    const localEventTime = new Date(targetEvent.At); // Copy the date so we don't mofify original object
+    localEventTime.setTime(localEventTime.getTime() + (localEventTime.getTimezoneOffset() + utcOffset) * 60 * 1000);
+
+    // TODO: Try and convert HH:MM:SS to users local format?
+
+    // Simple function to pad single digit number with leading zero
+    const pad = (d: number) => d < 10 ? '0' + d : d.toString();
+
+    // HTML Content
+    const content = `
+    <h2>${targetEvent.Name}</h2>
+    <table>
+        <tr>
+            <td><strong>Event starts at: </strong></td>
+            <td><strong>${localEventTime.toLocaleString()}</strong></td>
+        </td>
+
+        <tr>
+            <td>Current time: </td>
+            <td>${pad(localNow.getHours())}:${pad(localNow.getMinutes())}:${pad(localNow.getSeconds())}</td>
+        </td>
+
+        <tr>
+            <td>Your time: </td>
+            <td>${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}</td>
+        </td>
+
+        <tr>
+            <td>Local Timezone: </td>
+            <td>${olsonName} (${tzName})</td>
+        </td>
+
+        <tr>
+            <td>Offset from UTC (hours): </td>
+            <td>${utcOffset / 60}</td>
+        </td>
+    </table>
+    `;
+    instance.ShowInfoWindow(content);
+}
+
+//////////////////////////////////////////////////
 // Google maps dark theme magic
+//////////////////////////////////////////////////
 const gmapStyle = [
     {
         "featureType": "all",

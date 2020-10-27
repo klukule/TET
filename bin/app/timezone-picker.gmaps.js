@@ -1,4 +1,4 @@
-class GoogleMapsWrapper extends TimezonePickerMapper {
+class TZGoogleMapsProvider extends TimezonePickerMapper {
     constructor(el, mouseClickHandler, mouseMoveHandler, mapOptions) {
         super(el, mouseClickHandler, mouseMoveHandler, mapOptions);
         this._lastInfoWindow = null;

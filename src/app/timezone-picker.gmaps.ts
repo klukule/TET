@@ -2,7 +2,7 @@
 /**
  * Wrapper class around google maps API
  */
-class GoogleMapsWrapper extends TimezonePickerMapper {
+class TZGoogleMapsProvider extends TimezonePickerMapper {
     private _map: google.maps.Map;
     private _lastInfoWindow: google.maps.InfoWindow = null;
 

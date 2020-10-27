@@ -1,7 +1,9 @@
+const API_URL = 'assets/events.json';
+let Events = [];
+let EventId = -1;
 async function Loaded() {
-    const element = document.querySelector('#zonepicker');
-    const timezonePicker = new TimezonePicker(element, {
-        mapper: GoogleMapsWrapper,
+    const timezonePicker = new TimezonePicker(document.querySelector('#zonepicker'), {
+        mapper: TZGoogleMapsProvider,
         jsonRootUrl: 'assets/tz_json/',
         initialLat: 0,
         initialLng: 0,
@@ -15,16 +17,71 @@ async function Loaded() {
     timezonePicker.OnReady.Subscribe(() => {
         timezonePicker.SelectZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
     });
-    timezonePicker.OnHover.Subscribe((offsetMinutes, timezoneNames) => {
-    });
     timezonePicker.OnSelect.Subscribe((olsonName, utcOffset, tzName) => {
-        timezonePicker.ShowInfoWindow('On select test');
+        DisplayActiveEvent(timezonePicker, olsonName, utcOffset, tzName);
     });
+    await LoadEvents();
     await timezonePicker.InitializeAsync();
+    await BuildMenu();
     Utils.EndLoading();
 }
 Utils.BeginLoading();
 google.maps.event.addDomListener(window, 'load', Loaded);
+async function LoadEvents() {
+    const rawEvents = await Network.GetAsync(API_URL);
+    Events = rawEvents.map(evt => ({ Id: evt.id, At: new Date(evt.at), Name: evt.name }))
+        .sort((a, b) => b.At.getTime() - a.At.getTime());
+    const queryId = Utils.GetQueryParameterByName("id");
+    EventId = queryId != null ? parseInt(queryId) : (Events.length > 0 ? Events[0].Id : -1);
+    console.groupCollapsed("Events");
+    console.log("DB", Events);
+    console.log("Query", EventId);
+    console.groupEnd();
+}
+async function BuildMenu() {
+}
+function DisplayActiveEvent(instance, olsonName, utcOffset, tzName) {
+    if (EventId == -1) {
+        instance.ShowInfoWindow("No active event found.");
+        return;
+    }
+    const targetEvent = Events.find(e => e.Id == EventId);
+    const now = new Date();
+    const localNow = new Date(now.getTime() + (now.getTimezoneOffset() + utcOffset) * 60 * 1000);
+    const localEventTime = new Date(targetEvent.At);
+    localEventTime.setTime(localEventTime.getTime() + (localEventTime.getTimezoneOffset() + utcOffset) * 60 * 1000);
+    const pad = (d) => d < 10 ? '0' + d : d.toString();
+    const content = `
+    <h2>${targetEvent.Name}</h2>
+    <table>
+        <tr>
+            <td><strong>Event starts at: </strong></td>
+            <td><strong>${localEventTime.toLocaleString()}</strong></td>
+        </td>
+
+        <tr>
+            <td>Current time: </td>
+            <td>${pad(localNow.getHours())}:${pad(localNow.getMinutes())}:${pad(localNow.getSeconds())}</td>
+        </td>
+
+        <tr>
+            <td>Your time: </td>
+            <td>${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}</td>
+        </td>
+
+        <tr>
+            <td>Local Timezone: </td>
+            <td>${olsonName} (${tzName})</td>
+        </td>
+
+        <tr>
+            <td>Offset from UTC (hours): </td>
+            <td>${utcOffset / 60}</td>
+        </td>
+    </table>
+    `;
+    instance.ShowInfoWindow(content);
+}
 const gmapStyle = [
     {
         "featureType": "all",

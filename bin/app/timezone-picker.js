@@ -12,6 +12,7 @@ class TimezonePicker {
         this._mapZones = {};
         this._transitions = {};
         this._isLoaded = false;
+        this._polygonCache = {};
         this._currentHoverRegion = null;
         this._hoverRegions = {};
         this._hoverPolygons = [];
@@ -214,8 +215,10 @@ class TimezonePicker {
             return;
         Utils.BeginLoading();
         try {
-            const data = await Network.GetAsync(this._options.jsonRootUrl + `polygons/${zoneName}.json`);
-            Utils.EndLoading();
+            if (!this._polygonCache[zoneName]) {
+                this._polygonCache[zoneName] = await Network.GetAsync(this._options.jsonRootUrl + `polygons/${zoneName}.json`);
+            }
+            const data = this._polygonCache[zoneName];
             this._mapZones[zoneName] = [];
             for (const name in data.transitions) {
                 const transitions = data.transitions[name];
@@ -244,6 +247,7 @@ class TimezonePicker {
         catch {
         }
         finally {
+            Utils.EndLoading();
         }
     }
     SelectPolygonZone(polygon) {
