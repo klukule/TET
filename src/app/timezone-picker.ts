@@ -139,6 +139,11 @@ class TimezonePicker {
 
     private _isLoaded = false;
 
+    /**
+     * Contains cached data from polygon responses - lazyloaded as required
+     */
+    private _polygonCache: { [key: string]: any } = {};
+
     private _currentHoverRegion: string = null;
     private _hoverRegions: { [key: string]: TZHoverRegionEntry } = {};
     private _hoverPolygons: TimezonePickerPolygon[] = [];
@@ -146,6 +151,7 @@ class TimezonePicker {
     public OnReady: EventEmitter = new EventEmitter();
     public OnHover: EventEmitter = new EventEmitter();
     public OnSelect: EventEmitter = new EventEmitter();
+
 
     constructor(targetElement: Element, options: ITimezonePickerOptions) {
         this._options = options || { mapper: null };
@@ -399,8 +405,11 @@ class TimezonePicker {
         if (this._mapZones[zoneName]) return;
         Utils.BeginLoading();
         try {
-            const data = await Network.GetAsync<any>(this._options.jsonRootUrl + `polygons/${zoneName}.json`);
-            Utils.EndLoading();
+            // Load and cache polygon data when required
+            if (!this._polygonCache[zoneName]) {
+                this._polygonCache[zoneName] = await Network.GetAsync<any>(this._options.jsonRootUrl + `polygons/${zoneName}.json`);
+            }
+            const data = this._polygonCache[zoneName];
 
 
             this._mapZones[zoneName] = [];
@@ -436,7 +445,7 @@ class TimezonePicker {
         } catch {
 
         } finally {
-
+            Utils.EndLoading();
         }
 
     }
