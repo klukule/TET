@@ -35,6 +35,8 @@ async function Loaded() {
     });
     SidenavEventSelected.Subscribe((eventId) => {
         EventId = eventId;
+        // TODO: Use pushState and handle going back in history, once I find out how :)
+        window.history.replaceState('', '', Utils.UpdateQueryParameterByName('id', EventId.toString()));
         const event = Events.find(e => e.Id == eventId);
         timezonePicker.SetDate(event.At);
         timezonePicker.SelectZone(timezonePicker.GetSelectedZone());
@@ -76,6 +78,11 @@ async function LoadEvents() {
     const queryId = Utils.GetQueryParameterByName("id");
     // TODO: Check if queryId > 0 etc...
     EventId = queryId != null ? parseInt(queryId) : (Events.length > 0 ? Events[0].Id : -1);
+
+    // Store it in the URL if we have valid event
+    if (EventId > -1) {
+        window.history.replaceState('', '', Utils.UpdateQueryParameterByName('id', EventId.toString()));
+    }
     console.groupCollapsed("Events");
     console.log("DB", Events);
     console.log("Query", EventId);

@@ -20,6 +20,7 @@ async function Loaded() {
     });
     SidenavEventSelected.Subscribe((eventId) => {
         EventId = eventId;
+        window.history.replaceState('', '', Utils.UpdateQueryParameterByName('id', EventId.toString()));
         const event = Events.find(e => e.Id == eventId);
         timezonePicker.SetDate(event.At);
         timezonePicker.SelectZone(timezonePicker.GetSelectedZone());
@@ -44,6 +45,9 @@ async function LoadEvents() {
         .sort((a, b) => b.At.getTime() - a.At.getTime());
     const queryId = Utils.GetQueryParameterByName("id");
     EventId = queryId != null ? parseInt(queryId) : (Events.length > 0 ? Events[0].Id : -1);
+    if (EventId > -1) {
+        window.history.replaceState('', '', Utils.UpdateQueryParameterByName('id', EventId.toString()));
+    }
     console.groupCollapsed("Events");
     console.log("DB", Events);
     console.log("Query", EventId);

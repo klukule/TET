@@ -20,6 +20,54 @@ class Utils {
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
+    /**
+     * Replaces or create URL query parameter (used to update history steps)
+     * @param name Parameter name
+     * @param newValue New value of the parameter
+     * @param url Url, window.location.href unless specified
+     * @author Taken from https://stackoverflow.com/a/10997390
+     */
+    public static UpdateQueryParameterByName(name: string, newValue: string, url: string = '') {
+        if (!url) url = window.location.href;
+        var TheAnchor = null;
+        var newAdditionalURL = "";
+        var tempArray = url.split("?");
+        var baseURL = tempArray[0];
+        var additionalURL = tempArray[1];
+        var temp = "";
+
+        if (additionalURL) {
+            var tmpAnchor = additionalURL.split("#");
+            var TheParams = tmpAnchor[0];
+            TheAnchor = tmpAnchor[1];
+            if (TheAnchor)
+                additionalURL = TheParams;
+
+            tempArray = additionalURL.split("&");
+
+            for (var i = 0; i < tempArray.length; i++) {
+                if (tempArray[i].split('=')[0] != name) {
+                    newAdditionalURL += temp + tempArray[i];
+                    temp = "&";
+                }
+            }
+        }
+        else {
+            var tmpAnchor = baseURL.split("#");
+            var TheParams = tmpAnchor[0];
+            TheAnchor = tmpAnchor[1];
+
+            if (TheParams)
+                baseURL = TheParams;
+        }
+
+        if (TheAnchor)
+            newValue += "#" + TheAnchor;
+
+        var rows_txt = temp + "" + name + "=" + newValue;
+        return baseURL + "?" + newAdditionalURL + rows_txt;
+    }
+
     private static _loadingCount = 0;
 
     private static EnsureLoaderExists() {
