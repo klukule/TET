@@ -197,11 +197,7 @@ class TimezonePicker {
             // Merge zone centroids
             for (const box of this._boundingBoxes) {
                 for (const zone in box.zoneCentroids) {
-                    const centroids = box.zoneCentroids[zone];
-                    if (!this._zoneCentroids[zone])
-                        this._zoneCentroids[zone] = centroids;
-                    else
-                        this._zoneCentroids[zone].push(...centroids);
+                    this._zoneCentroids[zone] = box.zoneCentroids[zone];
                 }
             }
 
@@ -420,11 +416,7 @@ class TimezonePicker {
             this._mapZones[zoneName] = [];
 
             for (const name in data.transitions) {
-                const transitions = data.transitions[name];
-                // if (!this._transitions[name])
-                this._transitions[name] = transitions;
-                // else
-                // this._transitions[name].push(...transitions);
+                this._transitions[name] = data.transitions[name];
             }
 
 

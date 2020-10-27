@@ -48,11 +48,7 @@ class TimezonePicker {
             this._boundingBoxes = await Network.GetAsync(this._options.jsonRootUrl + 'bounding_boxes.json');
             for (const box of this._boundingBoxes) {
                 for (const zone in box.zoneCentroids) {
-                    const centroids = box.zoneCentroids[zone];
-                    if (!this._zoneCentroids[zone])
-                        this._zoneCentroids[zone] = centroids;
-                    else
-                        this._zoneCentroids[zone].push(...centroids);
+                    this._zoneCentroids[zone] = box.zoneCentroids[zone];
                 }
             }
             if (this._options.hoverRegions) {
@@ -226,8 +222,7 @@ class TimezonePicker {
             const data = this._polygonCache[zoneName];
             this._mapZones[zoneName] = [];
             for (const name in data.transitions) {
-                const transitions = data.transitions[name];
-                this._transitions[name] = transitions;
+                this._transitions[name] = data.transitions[name];
             }
             var result = this.HitTestAndConvert(data.polygons, lat, lng);
             if (result.inZone) {
