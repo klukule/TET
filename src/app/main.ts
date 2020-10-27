@@ -35,6 +35,8 @@ async function Loaded() {
     });
     SidenavEventSelected.Subscribe((eventId) => {
         EventId = eventId;
+        const event = Events.find(e => e.Id == eventId);
+        timezonePicker.SetDate(event.At);
         timezonePicker.SelectZone(timezonePicker.GetSelectedZone());
     });
 
@@ -45,6 +47,12 @@ async function Loaded() {
 
 
     await LoadEvents();
+    // Sync picker and event dates
+    if (EventId > -1) {
+        const event = Events.find(e => e.Id == EventId);
+        timezonePicker.SetDate(event.At);
+    }
+
     // Initialize timezone picker after we have events, so we can display it right away
     await timezonePicker.InitializeAsync();
     await BuildMenu();

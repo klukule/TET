@@ -20,12 +20,18 @@ async function Loaded() {
     });
     SidenavEventSelected.Subscribe((eventId) => {
         EventId = eventId;
+        const event = Events.find(e => e.Id == eventId);
+        timezonePicker.SetDate(event.At);
         timezonePicker.SelectZone(timezonePicker.GetSelectedZone());
     });
     timezonePicker.OnSelect.Subscribe((olsonName, utcOffset, tzName) => {
         DisplayActiveEvent(timezonePicker, olsonName, utcOffset, tzName);
     });
     await LoadEvents();
+    if (EventId > -1) {
+        const event = Events.find(e => e.Id == EventId);
+        timezonePicker.SetDate(event.At);
+    }
     await timezonePicker.InitializeAsync();
     await BuildMenu();
     Utils.EndLoading();
